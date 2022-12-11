@@ -1,0 +1,75 @@
+<html>
+<head>
+  <title>Aave Deposit</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.0.0-beta.34/dist/web3.min.js"></script>
+  <script>
+    // Initialize web3
+    if (typeof web3 !== 'undefined') {
+      web3 = new Web3(web3.currentProvider);
+    } else {
+      // Set the provider you want from Web3.providers
+      web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/YOUR-INFURA-API-KEY"));
+    }
+
+    // Set the address of the Aave contract
+    const aaveContractAddress = "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8";
+
+    // Set the ABI of the Aave contract
+    const aaveContractABI = [
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "name",
+        "outputs": [
+          {
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      // ... Additional ABI definitions omitted for brevity ...
+    ];
+
+    // Create an instance of the Aave contract
+    const aaveContract = new web3.eth.Contract(aaveContractABI, aaveContractAddress);
+
+    // Function to handle form submission
+    function deposit() {
+      // Get the value of the "deposit-amount" field
+      const depositAmount = document.getElementById("deposit-amount").value;
+
+      // Get the value of the "deposit-token" field
+      const depositToken = document.getElementById("deposit-token").value;
+
+      // Call the deposit function of the Aave contract
+      aaveContract.methods.deposit(depositAmount, depositToken).send({ from: web3.eth.defaultAccount })
+        .then(function(receipt) {
+          // Deposit was successful, show a success message
+          alert("Deposit successful! Transaction hash: " + receipt.transactionHash);
+        }).catch(function(error) {
+          // Deposit failed, show an error message
+          alert("Error: " + error);
+        });
+    }
+  </script>
+</head>
+<body>
+  <h1>Aave Deposit</h1>
+  <p>Welcome to the Aave deposit page!</p>
+  <form onsubmit="deposit(); return false;">
+    <label for="deposit-amount">Enter the amount you would like to deposit:</label><br>
+    <input type="text" id="deposit-amount" name="deposit-amount"><br><br>
+    <label for="deposit-token">Select the token you would like to deposit:</label><br>
+    <select id="deposit-token" name="deposit-token">
+  <option value="ETH">Ether (ETH)</option>
+  <option value="DAI">Dai (DAI)</option>
+  <option value="USDC">USD Coin (USDC)</option>
+  <option value="USDT">Tether (USDT)</option>
+</select><br><br>
+<input type="submit" value="Deposit">
+</form> 
+</body>
+</html>
